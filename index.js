@@ -56,13 +56,14 @@ app.get("/logout", (req, res) => {
   });
 });
 
-app.get("/secrets", (req, res) => {
+app.get("/secrets", async (req, res) => {
+  console.log(req.user);
 
   if(req.isAuthenticated){
     try{
-      const result = db.query("SELECT secret FROM users WHERE email = $1", [req.user.email]);
+      const result = await db.query(`SELECT secret FROM users WHERE email = $1`, [req.user.email]);
       console.log(result);
-      const secret = result.rows[0].secrets;
+      const secret = result.rows[0].secret;
       if(secret){
         res.render("secrets.ejs", {secret: secret});
       } else{
